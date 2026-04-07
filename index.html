@@ -3,410 +3,555 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NBHWC Midnight Mastery - Full 150 Question Set</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>NBHWC Study Guide & Question Bank</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #020617; 
-            color: #f1f5f9;
-            min-height: 100vh;
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --error: #ef4444;
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
 
-        .category-tag {
-            font-size: 0.65rem;
-            padding: 2px 10px;
-            border-radius: 9999px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #60a5fa;
+            --border: #334155;
+            --success: #34d399;
+            --error: #f87171;
+            --card-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
         }
 
-        .cat-1 { background-color: #064e3b; color: #6ee7b7; border: 1px solid #10b981; } /* Presence */
-        .cat-2 { background-color: #1e3a8a; color: #93c5fd; border: 1px solid #3b82f6; } /* Behavior */
-        .cat-3 { background-color: #78350f; color: #fcd34d; border: 1px solid #f59e0b; } /* Skills */
-        .cat-4 { background-color: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; } /* Ethics */
-        .cat-5 { background-color: #4c1d95; color: #c4b5fd; border: 1px solid #8b5cf6; } /* Science */
+        * { box-sizing: border-box; transition: background-color 0.2s, color 0.2s; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg-primary); color: var(--text-main); margin: 0; line-height: 1.6; }
 
-        .case-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background-color: #0f172a;
-            border: 1px solid #1e293b;
-        }
-        .case-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-            border-color: #334155;
-            background-color: #1e293b;
-        }
-        .case-card.solved-correct { border-left: 4px solid #10b981; }
-        .case-card.solved-wrong { border-left: 4px solid #ef4444; }
-
-        .progress-bar {
-            height: 6px;
-            border-radius: 3px;
-            background: #1e293b;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #10b981);
-            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(2, 6, 23, 0.9);
-            backdrop-filter: blur(12px);
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
             z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .container { max-width: 900px; margin: 1.5rem auto; padding: 0 1rem; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
             padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: var(--card-shadow);
         }
-        .modal-overlay.active { display: flex; align-items: center; justify-content: center; }
 
-        .option-item {
-            cursor: pointer;
-            border: 2px solid #1e293b;
-            background: #0f172a;
-            transition: all 0.2s;
-            width: 100%;
-            text-align: left;
+        .stat-value { font-size: 1.25rem; font-weight: 700; color: var(--accent); }
+        .stat-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); }
+
+        .progress-container {
+            background: var(--bg-card);
+            padding: 1.25rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
         }
-        .option-item:hover { border-color: #3b82f6; background: #1e293b; }
-        .option-item.correct { border-color: #10b981; background: #064e3b; color: #d1fae5; }
-        .option-item.wrong { border-color: #ef4444; background: #7f1d1d; color: #fee2e2; }
-        .option-item.disabled { pointer-events: none; }
 
-        .mastery-pill {
-            font-size: 0.7rem;
-            padding: 4px 12px;
-            background: #0f172a;
-            border: 1px solid #1e293b;
-            border-radius: 8px;
+        .progress-bar-bg { height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; display: flex; margin-top: 0.5rem; }
+        .progress-fill-correct { height: 100%; background: var(--success); width: 0%; transition: width 0.4s ease; }
+        .progress-fill-wrong { height: 100%; background: var(--error); width: 0%; transition: width 0.4s ease; }
+
+        .grid-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
+            gap: 0.4rem;
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            max-height: 240px;
+            overflow-y: auto;
+            margin-bottom: 2rem;
+        }
+
+        .grid-item {
+            aspect-ratio: 1;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 0.35rem;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            background: var(--bg-primary);
         }
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .grid-item:hover { border-color: var(--accent); background: rgba(37, 99, 235, 0.05); }
+        .grid-item.active { border: 2.5px solid var(--accent); background: rgba(37, 99, 235, 0.1); }
+        .grid-item.correct { background: var(--success) !important; color: white; border: none; }
+        .grid-item.wrong { background: var(--error) !important; color: white; border: none; }
+
+        .question-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .category { font-size: 0.7rem; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 1rem; opacity: 0.8; }
+        .question-text { font-size: 1.15rem; font-weight: 500; margin-bottom: 1.5rem; color: var(--text-main); }
+        .options-grid { display: grid; gap: 0.85rem; }
+
+        .option {
+            padding: 1.15rem;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            text-align: left;
+            background: transparent;
+            color: var(--text-main);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .option:hover:not(.disabled) { border-color: var(--accent); background: rgba(37, 99, 235, 0.05); }
+        .option.correct { background: rgba(16, 185, 129, 0.15) !important; border-color: var(--success) !important; color: var(--success) !important; font-weight: bold; }
+        .option.wrong { background: rgba(239, 68, 68, 0.1) !important; border-color: var(--error) !important; color: var(--error) !important; }
+
+        .explanation {
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            background: rgba(37, 99, 235, 0.05);
+            border-left: 5px solid var(--accent);
+            border-radius: 0 0.5rem 0.5rem 0;
+            display: none;
+        }
+        .explanation.visible { display: block; animation: fadeIn 0.4s ease; }
+
+        .controls { display: flex; gap: 0.5rem; }
+        button { padding: 0.6rem 1.2rem; border-radius: 0.5rem; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+        button.primary { background: var(--accent); color: white; border: none; }
+        button:hover:not(:disabled) { background: var(--border); }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .nav-footer { display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 5rem; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 600px) {
+            .container { padding: 0.5rem; }
+            .question-card { padding: 1.25rem; }
+            header { padding: 1rem; }
+            .nav-footer { flex-direction: column; }
+            .nav-footer button { width: 100%; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="max-w-7xl mx-auto px-4 py-8">
-        <header class="mb-10">
-            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-                <div>
-                    <h1 class="text-4xl font-black text-white tracking-tighter uppercase">Midnight <span class="text-blue-500">Mastery</span></h1>
-                    <p class="text-slate-400 mt-1 font-medium italic">NBHWC Unified Simulator • 150 Unified Clinical Scenarios</p>
-                </div>
-                
-                <div class="flex flex-wrap gap-3">
-                    <div class="mastery-pill shadow-lg">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <span class="text-slate-400">Correct: <b id="stat-correct" class="text-emerald-400">0</b></span>
-                    </div>
-                    <div class="mastery-pill shadow-lg">
-                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                        <span class="text-slate-400">Accuracy: <b id="stat-accuracy" class="text-blue-400">0%</b></span>
-                    </div>
-                    <button onclick="resetStats()" class="text-[10px] text-slate-500 hover:text-rose-500 font-bold uppercase tracking-widest border border-slate-800 px-3 py-1 rounded-md transition-all">Clear Progress</button>
-                </div>
-            </div>
-
-            <div class="mt-8 grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div class="col-span-1 md:col-span-2 bg-slate-900/50 p-5 rounded-2xl border border-slate-800 shadow-xl">
-                    <div class="flex justify-between text-xs mb-3">
-                        <span class="font-bold text-slate-500 uppercase tracking-widest">Total Progress</span>
-                        <span id="progress-text" class="text-emerald-400 font-bold">0/150</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
-                    </div>
-                </div>
-                <div id="category-mastery" class="col-span-1 md:col-span-3 flex gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
-                    <!-- Category pills populated by JS -->
-                </div>
-            </div>
-        </header>
-
-        <div class="sticky top-4 z-40 bg-slate-900/80 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border border-slate-800 mb-8 flex flex-col md:flex-row gap-4 items-center">
-            <div class="relative w-full md:w-1/3">
-                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </span>
-                <input type="text" id="search-input" placeholder="Search scenarios..." 
-                       class="block w-full pl-12 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none transition-all text-sm text-slate-200">
-            </div>
-            
-            <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto no-scrollbar">
-                <button onclick="filterCases(0)" class="filter-btn active whitespace-nowrap bg-blue-600 text-white px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest">All</button>
-                <button onclick="filterCases(1)" class="filter-btn whitespace-nowrap bg-slate-800 text-slate-400 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:text-white transition-all">Presence</button>
-                <button onclick="filterCases(2)" class="filter-btn whitespace-nowrap bg-slate-800 text-slate-400 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:text-white transition-all">Behavior</button>
-                <button onclick="filterCases(3)" class="filter-btn whitespace-nowrap bg-slate-800 text-slate-400 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:text-white transition-all">Skills</button>
-                <button onclick="filterCases(4)" class="filter-btn whitespace-nowrap bg-slate-800 text-slate-400 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:text-white transition-all">Ethics</button>
-                <button onclick="filterCases(5)" class="filter-btn whitespace-nowrap bg-slate-800 text-slate-400 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:text-white transition-all">Science</button>
-            </div>
-
-            <div class="ml-auto flex items-center">
-                <button onclick="shuffleBoard()" class="flex items-center gap-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-lg shadow-emerald-900/20">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    Shuffle 150
-                </button>
-            </div>
-        </div>
-
-        <div id="case-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-20"></div>
+<header>
+    <div style="font-weight: 800; font-size: 1.1rem; color: var(--accent)">NBHWC Study Pro</div>
+    <div class="controls">
+        <button id="shuffle-btn">🔀 Shuffle Order</button>
+        <button id="reset-btn" style="color: var(--error)">✖ Reset All</button>
+        <button id="theme-btn">🌓</button>
     </div>
+</header>
 
-    <div id="case-modal" class="modal-overlay">
-        <div class="bg-slate-900 rounded-[2.5rem] shadow-2xl max-w-3xl w-full max-h-[95vh] overflow-y-auto relative border border-slate-800">
-            <button onclick="closeModal()" class="fixed md:absolute top-4 right-4 p-3 bg-slate-800 rounded-full text-slate-400 hover:text-white z-50 transition-all">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            
-            <div class="p-8 md:p-14">
-                <div class="flex items-center gap-3 mb-6">
-                    <div id="modal-category" class="category-tag">Category</div>
-                    <span id="modal-id" class="text-xs font-mono text-slate-600 tracking-tighter">Case ID: --</span>
-                </div>
-                
-                <div id="modal-title" class="text-lg md:text-xl text-slate-200 mb-10 leading-relaxed font-medium bg-slate-950 p-8 rounded-3xl border border-slate-800 shadow-inner whitespace-pre-line">
-                    <!-- Scenario text -->
-                </div>
-                
-                <div id="options-container" class="space-y-4 mb-12"></div>
-
-                <div id="feedback-section" class="hidden">
-                    <div class="p-8 bg-blue-600/10 rounded-3xl border border-blue-600/30">
-                        <div class="flex items-center gap-3 mb-4">
-                            <svg class="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-                            <h4 class="text-xs font-black uppercase tracking-[0.2em] text-blue-400">Expert Reasoning</h4>
-                        </div>
-                        <p id="explanation-text" class="text-slate-300 leading-relaxed text-sm md:text-base"></p>
-                    </div>
-                    <button onclick="closeModal()" class="mt-8 w-full bg-emerald-600 text-white py-5 rounded-3xl font-black text-xl hover:bg-emerald-500 uppercase tracking-widest">Next Challenge</button>
-                </div>
-            </div>
+<div class="container">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value" id="stat-completed">0 / 150</div>
+            <div class="stat-label">Questions Tried</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="stat-accuracy">0%</div>
+            <div class="stat-label">Current Accuracy</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="stat-correct">0</div>
+            <div class="stat-label">Correct Hits</div>
         </div>
     </div>
 
-    <script>
-        // MASTER DATASET: Combined Set 1 (Original 75) + Set 2 (New 75)
-        const nbhwcDataset = [
-            // --- SET 1: Original 75 Scenarios ---
-            { id: "S1-1", cat: 3, title: "Stress & BP Proactivity", text: "A 52-year-old man meets with the coach at the company’s on-site wellness clinic for the second session to increase exercise and reduce stress. He says he is very concerned that if he does not get his blood pressure in check, he may end up having a stroke like his father. He appears upset. Most appropriate next step?", options: ["Affirm the client for being proactive", "Provide a positive reframe", "Suggest meditation to reduce stress", "Use appropriate silence"], answer: 0, explanation: "Affirming client’s behaviors builds confidence and self-efficacy." },
-            { id: "S1-2", cat: 1, title: "Cancer Story Discovery", text: "A 60-year-old woman recently diagnosed with breast cancer meets the coach. Client: 'I am sure you have heard cancer stories over and over.' Coach: 'You are concerned I have already heard it all before. Your story is important. What did it feel like to learn you have cancer?' Technique?", options: ["Affirming the client’s emotional state", "Assessing resilience", "Demonstrating curiosity without assumptions", "Redirecting focus", "Shifting perspective"], answer: 2, explanation: "Coach uses a 'not-knowing' mindset: getting curious and supporting the client as the expert." },
-            { id: "S1-3", cat: 1, title: "First Session Priorities", text: "A 38-year-old woman speaks with the coach on the phone for the first session. The client completed chemotherapy and radiation therapy for breast cancer and is now in remission. The client tells the coach that the client is concerned about a relapse and wants to integrate cardiovascular exercise, strength training, sleeping at least 7 hours nightly, stress management, and having fun with friends again. Which is the most appropriate response?", options: ["“How will you know that you have achieved your goals?”", "“Let us take a look at your readiness for each area.”", "“Shall we start with exploring stress management?”", "“Which of the areas you mentioned feels most important?”"], answer: 3, explanation: "Helps the client get clearer on what matters most and where they want to go first." },
-            { id: "S1-4", cat: 2, title: "Growth Mindset Prediabetes", text: "A 57-year-old woman for prediabetes says she knows she can replace juice with water because she has learned from past experience that when she puts in the effort, she can succeed. Which theory is reflected?", options: ["Decisional balance", "Growth mindset", "Motivational interviewing", "Social cognitive theory", "Transtheoretical Model"], answer: 1, explanation: "Reflecting on strengths and previous growth demonstrates a capacity to learn from experience." },
-            { id: "S1-5", cat: 5, title: "Illness-Wellness Mapping", text: "A 36-year-old man with normal labs says: “I may seem healthy, but I notice that I do not have the energy that I used to.” He does not eat well or exercise. Where on the Illness–Wellness Continuum?", options: ["Treatment Paradigm, but not moving", "Neutral Point moving toward Treatment", "Neutral Point", "Neutral Point moving toward High-Level Wellness"], answer: 1, explanation: "Normal labs = Neutral Point. No proactive habits + dropping energy = moving toward treatment." },
-            { id: "S1-11", cat: 5, title: "Metabolic Markers", text: "Which clinical findings are most indicative of a diagnosis of metabolic syndrome?", options: ["High HDL, high fasting sugar, high waist", "High triglyceride level, high waist circumference, and high blood pressure", "High triglyceride, high fasting sugar, low blood pressure"], answer: 1, explanation: "Diagnosis requires 3 of 5 criteria: waist circ, triglycerides, reduced HDL, BP, or fasting glucose." },
-            { id: "S1-13", cat: 4, title: "Confidentiality Limitation", text: "A 45-year-old man with hypertension asks: 'If I see you as my coach, will you share the things we talk about with my doctor since they referred me?' Most appropriate response?", options: ["“Discussions are confidential, unless I report harm risk.”", "“I promise not to tell your doctor anything.”", "“Health team should share information openly.”", "“Don't worry, I'm not a marital expert.”"], answer: 0, explanation: "Validates concerns and explains confidentiality limits regarding safety/harm." },
-            { id: "S1-33", cat: 1, title: "Introductory Roles", text: "A 53-year-old woman comes to the coach's office for a vegan diet goal. She wants the coach to plan a menu and tell her where to shop. Next step?", options: ["Identify health food stores", "Plan a vegan menu", "Describe coaching process and roles", "Suggest research cookbooks"], answer: 2, explanation: "Clarifies expectations and responsibilities in the coaching relationship." },
-            { id: "S1-45", cat: 4, title: "Expertise Boundaries", text: "A coach (triathlete) recommends back exercises to a client with leg numbness. Violation?", options: ["Accurate representation of expertise", "Balancing roles", "Conflict of interest", "Professional boundaries"], answer: 0, explanation: "Exceeds scope by giving clinical advice based on hobbies." },
-            { id: "S1-56", cat: 4, title: "Babysitting standard", text: "Client cannot find babysitter for 3 kids. Coach offers to watch them. Standard violated?", options: ["Confidentiality", "Conflict of interest", "Professional boundaries", "Scope of practice"], answer: 2, explanation: "Blurring lines of dual relationships." },
-            { id: "S1-73", cat: 5, title: "Hypertensive Crisis symptoms", text: "BP is 160/110. Client reports feeling more tired lately and short of breath when walking up stairs. Next step?", options: ["Emergency department directly", "Ask family history", "Ride home", "Visit PCP within a week"], answer: 0, explanation: "High BP reading + Symptoms (shortness of breath) = Hypertensive emergency (Call 911/ER)." },
+    <div class="progress-container">
+        <div class="grid-header">
+            <div class="stat-label">Mastery Progress</div>
+            <div class="stat-label" id="percent-label">0% Complete</div>
+        </div>
+        <div class="progress-bar-bg">
+            <div class="progress-fill-correct" id="fill-correct"></div>
+            <div class="progress-fill-wrong" id="fill-wrong"></div>
+        </div>
+    </div>
 
-            // --- SET 2: New 75 Scenarios (Unified and Categorized) ---
-            { id: "S2-1", cat: 3, title: "Husband's Cookies", text: "A 52-year-old woman diagnosed with metabolic syndrome wants to replace snacks but worries about husband's cookies. 'I know I’m going to be tempted.' Next response?", options: ["Find a healthier cookie", "Goal too big", "What will you do when that happens?", "Where else to keep snacks?"], answer: 2, explanation: "Invites exploration of coping strategies when temptation arises." },
-            { id: "S2-2", cat: 1, title: "Tearful Overeating", text: "A 40-year-old woman tearfully shares she overate while using a tracking app. Most appropriate initial response?", options: ["Everyone overeats occasionally", "I see your tears; tell me more about feelings", "Struggling with stress", "Share relevant info"], answer: 1, explanation: "Observation and question invite the client to recognize and process emotion." },
-            { id: "S2-3", cat: 1, title: "Grief Presence", text: "Client discusses father dying at 48. Coach’s father died similarly 2 years ago. Coach feels grief. Initial step?", options: ["Assess ability to be present", "Provide risk info", "Share coach's story", "Ignore memories"], answer: 0, explanation: "Self-awareness allows the coach to be present without being influenced by personal emotion." },
-            { id: "S2-4", cat: 1, title: "Reflective Closure", text: "Final session. Client consistent with exercise and plans a half-marathon. Next step?", options: ["Ask about training plan", "Elicit satisfaction", "Explore future race goals", "Invite reflection on lessons learned"], answer: 3, explanation: "Final session should include reflective closure and honoring growth." },
-            { id: "S2-5", cat: 3, title: "Goal Steps Exploration", text: "Client plans to cook dinner on Tue/Thu. Already affirmed. Next step?", options: ["Rate readiness 0-10", "Create grocery list", "Explore additional steps needed", "Ask about other five nights"], answer: 2, explanation: "Helps client identify steps, barriers, and supports for the specific goal." },
-            { id: "S2-6", cat: 3, title: "Visioning Possibility", text: "30-year-old woman wants to lose weight. Initial step for visioning?", options: ["Ask if lost weight before", "Start journaling", "Identify specific goal", "Ask what would be possible if weight lost"], answer: 3, explanation: "Visioning supports exploration of desired future outcomes." },
-            { id: "S2-7", cat: 1, title: "Client Knowledge Elicitation", text: "First session after cardiac bypass. Coach unfamiliar with procedure. Approach?", options: ["Ask what he knows about precautions", "Disclose unfamiliarity", "Note areas of interest", "Write down return-to-activity ideas"], answer: 0, explanation: "Asking what client knows elicits understanding and guides coaching (Ask-Offer-Ask)." },
-            { id: "S2-8", cat: 3, title: "Bottom-lining story", text: "Session not progressing; client sharing stories about coworkers. Technique?", options: ["Bottom-lining", "Open-ended question", "Simple reflection", "Summarizing"], answer: 0, explanation: "Bottom-lining refocuses conversation on what matters most." },
-            { id: "S2-15", cat: 2, title: "Marketing 'Yet' Shift", text: "Nutrition consultant goal. Client says she is bad at marketing. Coach: 'You are not strong at marketing yourself yet.' Concept?", options: ["Appreciative inquiry", "Growth mindset", "Positive psychology", "Self-determination"], answer: 1, explanation: "Emphasizes effort, learning, and potential." },
-            { id: "S2-18", cat: 5, title: "Biometric Range", text: "38yo male: Height 6'2, 187lb (BMI 24), BP 134/84, Glucose 81. Which is outside normal range?", options: ["Blood pressure", "Blood sugar", "BMI", "Weight"], answer: 0, explanation: "134/84 meets criteria for elevated/stage 1 hypertension." },
-            { id: "S2-19", cat: 5, title: "Continuum Growth", text: "Man with diabetes wants to stop meds by losing weight. Point on continuum?", options: ["Disability", "Symptoms", "Neutral point", "Growth"], answer: 3, explanation: "Pursuing active self-improvement reflects 'growth' towards high-level wellness." },
-            { id: "S2-21", cat: 5, title: "SDOH Awareness", text: "Client wants fresh veg but lives in neighborhood without a grocery store. SDOH approach?", options: ["Motivation coaching", "Explore affordable frozen/shelf-stable options locally", "Reframing", "Meal plan"], answer: 1, explanation: "Acknowledges structural barriers and supports realistic adaptation." },
-            { id: "S2-22", cat: 4, title: "Dual Relationship Referral", text: "Former brief sexual partner asks to be a client. Response?", options: ["Explain bad candidate", "Accept but watch boundaries", "Phone sessions only", "Referral to other coaches"], answer: 3, explanation: "Avoiding dual relationships protects client and boundaries." },
-            { id: "S2-25", cat: 4, title: "Mental Health Referral", text: "Laid off client appeared sad, slumped, says 'life is too hard; don't see it getting better.' Step?", options: ["Outside scope; refer to mental health pro", "Encourage support system", "Redirect", "Reflect strengths"], answer: 0, explanation: "Presentation indicates possible depression and requires clinical referral." },
-            { id: "S2-28", cat: 2, title: "Habit Neuroplasticity", text: "Client misses morning walk after 3 days. 'I'm not disciplined.' Response?", options: ["Discipline improves repetition", "Brain strengthens habits through cues and repetition", "Formation easily varies", "Restart later"], answer: 1, explanation: "Habits form through consistent cues and repetition, not just willpower." },
-            { id: "S2-35", cat: 5, title: "Hypoglycemia recognition", text: "Diabetic on insulin feels dizzy, slurred speech after exercise. Response?", options: ["Call when better", "See doctor later", "Reschedule", "Urgent care immediately (low blood sugar)"], answer: 3, explanation: "Symptoms signal hypoglycemia, a medical emergency." },
-            { id: "S2-51", cat: 4, title: "Mandatory Agreement Content", text: "What is mandatory to include in any coaching agreement?", options: ["Client/coach responsibilities", "Testimonials", "Expertise areas", "Guaranteed outcomes"], answer: 0, explanation: "Agreement must define roles, responsibilities, and logistics." },
-            { id: "S2-57", cat: 4, title: "Scope Prescribing", text: "Personal trainer coach wants to prescribe nutrition plan after a webinar. Violation?", options: ["Accurate credentials", "Balancing roles", "Conflict of interest", "Scope of practice"], answer: 3, explanation: "Coaches cannot prescribe specific diets or meal plans." },
-            { id: "S2-65", cat: 5, title: "Naltrexone Continuum", text: "Alcohol struggles, taking Naltrexone for 4 weeks, sober for 2 weeks. Continuum point?", options: ["Neutral", "Treatment Paradigm (not moving)", "Treatment moving toward Neutral", "Wellness moving toward High-Level"], answer: 2, explanation: "Medication reducing symptoms moves him toward neutral from treatment." },
-            { id: "S2-68", cat: 4, title: "Financial Disclosure", text: "Aromatherapist coach recommends own brand of oils without disclosing financial stake. Principle?", options: ["Confidentiality", "Conflict of interest", "Consent", "Boundaries"], answer: 1, explanation: "Financial interests must be disclosed to avoid conflicts of interest." },
-            { id: "S2-72", cat: 3, title: "Vague rationalization", text: "Client rationalizes missed steps and proposes vague future ones for 3 sessions. Next step?", options: ["Bottom-line one actionable commitment", "Share responsibilities", "Cut commitments", "Support several steps"], answer: 0, explanation: "Inviting specificity reduces avoidance and increases commitment." },
-            { id: "S2-73", cat: 3, title: "Inner Athlete Perspective", text: "Man embarrassed at gym; 'not as athletic as used to be'. Coach: 'What new activities might your inner athlete like to try?' Technique?", options: ["Discerning needs", "Eliciting new perspectives", "Mindful awareness", "Energy tuning"], answer: 1, explanation: "Invites client to consider new possibilities and reframes identity." }
-        ];
+    <div class="grid-header">
+        <div class="stat-label">Select Question</div>
+        <button id="toggle-grid-btn" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;">Hide Grid</button>
+    </div>
+    <div class="question-grid" id="question-grid"></div>
 
-        // Fill remaining stubs with full text context to hit exactly 150 unique items
-        const fullPool = [...nbhwcDataset];
-        const categoriesData = [
-            { id: 1, name: "Presence & Relations" },
-            { id: 2, name: "Behavior Change" },
-            { id: 3, name: "Skills & Tools" },
-            { id: 4, name: "Ethics & Law" },
-            { id: 5, name: "Health Science" }
-        ];
+    <div id="quiz-area"></div>
 
-        // Ensure 150 unique items are populated with meaningful clinical context
-        for (let i = 1; i <= 150; i++) {
-            const prefix = i <= 75 ? "S1" : "S2";
-            const currentId = `${prefix}-${i > 75 ? i-75 : i}`;
-            if (!fullPool.find(c => c.id === currentId)) {
-                const catId = (i % 5) + 1;
-                fullPool.push({
-                    id: currentId,
-                    cat: catId,
-                    title: `Clinical Simulation #${i}`,
-                    text: `Board Scenario #${i}: A client is referred to you for ${catId === 5 ? 'Hypertension' : 'Wellness'} management. They present with specific ${catId === 4 ? 'ethical' : 'lifestyle'} dilemmas. Based on NBHWC standards, which action best supports client self-discovery while maintaining professional scope?`,
-                    options: ["Elicit client's internal perspective first", "Offer a clinical diagnostic suggestion", "Direct the client to follow a standard plan", "Refer to the provider immediately"],
-                    answer: 0,
-                    explanation: "NBHWC standards prioritize client autonomy and internal motivation over directive advice."
-                });
+    <div class="nav-footer">
+        <button id="prev-btn">← Previous</button>
+        <button id="next-btn" class="primary">Next Question →</button>
+    </div>
+</div>
+
+<script>
+    const rawQuestions = [
+        // Set 1 (1-75) - FULL SCENARIOS ADDED
+        { id: 1, category: "3.5. Client self-efficacy", q: "A 52-year-old man meets with the coach at the company’s onsite wellness clinic for the second session to increase the level of exercise and reduce stress in order to lower the blood pressure. The client says the client is very concerned that if the client does not get the blood pressure in check, the client may end up having a stroke like the client's father. The client appears to be upset. Which of the following is the most appropriate next step by the coach?", options: ["Affirm the client for being proactive", "Provide a positive reframe", "Suggest meditation to reduce stress", "Use appropriate silence"], answer: 0, logic: "Affirming client’s behaviors builds confidence and self-efficacy." },
+        { id: 2, category: "1.1. Coach presence", q: "A 60-year-old woman meets with the coach via videoconferencing for the first session. The client was recently diagnosed with breast cancer and was referred to the coach by the cancer support group coordinator. The client is interested in implementing healthy lifestyle changes. A section of their conversation is shown:\n\nClient: I am sure you have heard cancer stories over and over again.\nCoach: Many survivors do share similar experiences and feelings when they learn they have cancer.\nClient: Yes, and I do not want to bore you with all the sad details.\nCoach: You are concerned I have already heard it all before. Your story is important. What did it feel like to learn you have cancer?\n\nWhich of the following techniques best describes the coach’s response?", options: ["Affirming emotional state", "Assessing resilience", "Demonstrating curiosity without assumptions", "Redirecting focus", "Shifting perspective"], answer: 2, logic: "Coach uses a 'not-knowing' mindset, curiosity without assumptions, and supports client expertise." },
+        { id: 3, category: "1.4. Session preparation", q: "A 38-year-old woman speaks with the coach on the phone for the first session to discuss healthy behaviors. The client completed chemotherapy and radiation therapy for breast cancer and is now in remission. The client tells the coach that the client is concerned about a relapse and wants to integrate new healthy behaviors into daily routines, including cardiovascular exercise, strength training, sleeping at least 7 hours nightly, stress management, and having fun with friends again. Which of the following is the most appropriate response by the coach?", options: ["“How will you know that you have achieved your goals?”", "“Let us take a look at your readiness for each area you want to change.”", "“Shall we start with exploring stress management?”", "“Which of the areas you mentioned feels most important?”"], answer: 3, logic: "Explores focus and importance to the client to determine the starting point." },
+        { id: 4, category: "2.7. Growth vs. Fixed Mindset", q: "A 57-year-old woman meets with the coach at the coach’s office for the third session in order to help manage prediabetes. During the session, the client selects the goal of replacing juice and soda with nonsugary beverages. The client says that the client knows the client can do it because the client has learned from past experience that when the client makes the choice and puts in the effort, the client can be successful. Which of the following constructs or theories is most likely reflected by this client’s comments?", options: ["Decisional balance", "Growth mindset", "Motivational interviewing", "Social cognitive theory", "Transtheoretical Model"], answer: 1, logic: "Belief in effort and learning from past experience reflects a growth mindset." },
+        { id: 5, category: "5.1. Health promotion", q: "A 36-year-old man meets with the coach at the primary care provider’s (PCP) office for the first session after an annual physical examination. The client’s PCP said all biometric results were within the normal range. During the session, the client says that the client does not eat a healthy diet or exercise regularly. The client says, “I may seem healthy, but I notice that I do not have the energy that I used to.” This client most likely falls on which of the following points on the Illness–Wellness Continuum?", options: ["Treatment Paradigm, but not moving", "Neutral Point moving toward the Treatment Paradigm", "Neutral Point", "Neutral Point moving toward High-Level Wellness"], answer: 1, logic: "Labs are normal (neutral), but poor habits move them toward treatment (illness)." },
+        { id: 6, category: "1.5. Early sessions", q: "A 19-year-old woman who is a collegiate softball player comes to the coach’s office for an introductory conversation. The client says, “I came to see you today because the professor of my wellness class suggested it. However, I already have a head coach, two assistant coaches, and a conditioning coach. Why would I even consider adding another coach at this point?” Which of the following is the most appropriate response by the coach?", options: ["“Come see me after you finish the softball season when you have more time to establish holistic goals.”", "“Each of your team coaches specializes in one performance area. A health and wellness coach can help you explore your overall wellbeing.”", "“I encourage you to trust your intuition. If you believe wellness coaching is not necessary, then I support your decision.”", "“I would suggest that you continue to work with the coaches you have.”"], answer: 1, logic: "Clarifies the unique scope of health and wellness coaching." },
+        { id: 7, category: "3.4. Perspective shifts", q: "A 55-year-old woman meets with the coach at the primary care provider’s office for the ninth weekly session to work on creating a healthier lifestyle. During today’s session, the client says,“I realize that my eating patterns are not in line with my wellness goals. I typically eat well during the day and have a healthy dinner when I get home, but then I tend to nibble all evening until bedtime.” To help this client develop an action plan, which of the following is the most appropriate next step by the coach?", options: ["Ask the client to track the calories consumed between dinner and bedtime for 1 week", "Brainstorm with the client healthy foods to eat at night", "Investigate potential triggers for eating after dinner", "Review the client’s wellness vision"], answer: 2, logic: "Exploring triggers helps the client observe behavior and find underlying causes." },
+        { id: 8, category: "3.1. Facilitation tools", q: "A 32-year-old woman meets with the coach at the primary care physician’s office to work on smoking cessation. She has smoked one pack of cigarettes daily for 17 years. The client does not want to quit, but the client is conflicted because the client and the client’s partner recently decided to start a family. Which of the following is most likely to help this client make a choice?", options: ["Bottom-lining", "Confidence scale", "Decisional balance", "Self-compassion"], answer: 2, logic: "Decisional balance explores perceived pros and cons of behavior change." },
+        { id: 9, category: "1.6. Follow-up sessions", q: "A 65-year-old man meets the coach at the community center for his second session to focus on having fun with a healthy lifestyle in retirement. He says he recently retired and enthusiastically shares all the activities he is ready to try. A section of their conversation is shown:\n\nClient: I have big plans to travel across the country, complete a marathon, go on a safari, volunteer with my grandchildren’s baseball team, and so much more. Where do I even start so that I can check them all off my wish list?\nCoach: You are taking advantage of this newfound freedom and are motivated to try new things.\n\nAfter working with the client to establish a wellness vision, which of the following is the most appropriate next step by the coach?", options: ["Assess the client’s confidence in completing his wish list", "Cocreate a chart to track the client’s progress", "Define an action step for the client", "Work with the client to create a SMART goal"], answer: 3, logic: "SMART goals are a natural progression after completing a vision statement." },
+        { id: 10, category: "2.7. Mindset", q: "A 30-year-old man speaks with the coach on the phone for the fifth session to discuss the goal of completing a 5km race. Despite persistent training, the client is unhappy with progress. Today, the client appears defeated and says, “I am just not meant to be a runner. I cannot do this.” Which of the following is the most appropriate next step by the coach to nurture a growth mindset in this client?", options: ["Agree with the client’s statement that some people are not natural runners", "Create a relapse plan to restart the client’s training", "Encourage positive thinking by reassuring the client", "Explore what the client has learned from persistent training efforts"], answer: 3, logic: "Invites the client to see progress as learning rather than binary success/failure." },
+        { id: 11, category: "5.3. Chronic disease", q: "Which of the following clinical findings are most indicative of a diagnosis of metabolic syndrome?", options: ["High HDL, High Sugar, High Waist", "High Triglycerides, High Waist, High Blood Pressure", "High Triglycerides, High Sugar, Low Blood Pressure", "Low HDL, Low Triglycerides, High BP"], answer: 1, logic: "Criteria: High waist, high TG, low HDL, high BP, or high fasting glucose." },
+        { id: 12, category: "3.4. Awareness", q: "A 45-year-old man speaks with the coach on the phone for the third session to work on lowering blood pressure. The goal from the previous session was to practice a mindful meditation each morning. Today, the client says,“I was not able to complete my goal this week. I had a few bad days at work, and I was only able to meditate on four mornings. I am not feeling very positive at the moment.” After offering a reflection, which of the following is the most appropriate response by the coach?", options: ["“Let us talk about setting yourself up for success next week.”", "“Perhaps the goal could be adjusted to fit your schedule.”", "“Tell me about how you felt on those mornings when you meditated.”", "“You did really well to meditate on four mornings.”"], answer: 3, logic: "Acknowledging effort increases resilience and self-efficacy." },
+        { id: 13, category: "4.3. Code of Ethics", q: "A 45-year-old man speaks with the coach on the phone for an introductory conversation about lifestyle modifications for hypertension. The client says: “My partner and I share the same primary care doctor... If I see you as my coach, will you share the things we talk about with my doctor since they referred me?” Which of the following is the most appropriate response by the coach?", options: ["“I hear your concerns and can reassure you that the content is confidential, unless I need to report risk of harm.”", "“I promise not to tell your doctor anything you do not want me to.”", "“It would be best if we could all share information openly.”", "“I am not an expert in the marital issues you are alluding to.”"], answer: 0, logic: "Validates concerns while clearly stating confidentiality and its limitations." },
+        { id: 14, category: "3.2. Communication", q: "A 79-year-old woman comes to the coach’s office for the fourth session after being diagnosed with mild dementia. The client’s daughter has created a schedule for the client that includes 12 daily activities. The client completes 4 of 12. A section of conversation:\n\nClient: I feel fine with the changes I have made. I sleep better, and I have more energy, but my daughter is treating me like a child.\nCoach: You are doing quite a few new things and feel much better. You are also frustrated with your daughter because she wants you to do even more.\n\nWhich of the following best describes the coach’s response?", options: ["Amplified reflection", "Double-sided reflection", "Recall", "Simple content reflection"], answer: 1, logic: "Double-sided reflections capture opposing feelings (success vs. frustration)." },
+        { id: 15, category: "2.3. MI Concepts", q: "A 58-year-old woman has gradually increased daily aquatherapy time from 10 minutes to 30 minutes. Today, the client says: “I cannot believe I have made it this far, but I am not sure I can keep this up.” The coach replies, “What would make it worthwhile to maintain this routine?” The coach’s response best demonstrates which motivational interviewing concept?", options: ["Creating partnership", "Encouraging acceptance", "Evoking importance", "Providing affirmation", "Showing compassion"], answer: 2, logic: "Draws out client values and emotional drivers for change." },
+        { id: 16, category: "3.5. Self-efficacy", q: "A 45-year-old woman speaks with the coach to improve work-life balance. Today, the client’s boss offered a promotion. The position requires more hours and travel, and the client says it is their “dream job.” The client feels torn and worries that family life will suffer if the job is accepted. Which of the following is the most appropriate next step by the coach?", options: ["Ask the client to list aspects of the role that make it the “dream job”", "Assist the client in evaluating the short-term and long-term benefits and consequences", "Help the client identify colleagues to discuss balance", "Offer to help the client explore other job opportunities"], answer: 1, logic: "Invites pros/cons evaluation prior to decision-making." },
+        { id: 17, category: "3.1. Facilitation", q: "A 42-year-old woman wants to go back to school but is worried about how she would find time for it; she works full-time and has four teenage children. She feels torn and says that if she does not go back soon, she likely never will. Which of the following is the most appropriate response by the coach to encourage self-discovery?", options: ["“Could you wait until your children are a little older?”", "“Do you think your children would support your desire?”", "“Is it realistic that you could balance school, work, and family?”", "“What are the benefits of going now, and what would you lose if you did not go at this time?”"], answer: 3, logic: "Uses decisional balance to explore the urgency and value of the choice." },
+        { id: 18, category: "3.1. Facilitation", q: "A 40-year-old woman has set the goal to walk briskly for 10 minutes on Monday, Wednesday, and Friday at lunchtime. To determine the client’s ability to meet this physical activity goal, which of the following is the most appropriate approach?", options: ["Ask the client how long she has been thinking about starting", "Ask the client how the client will reward the client", "Ask the client to rate confidence in achieving the goal using a 10-point scale", "Ask the client to write down the pros and cons"], answer: 2, logic: "Confidence scales determine readiness and realistic goal levels." },
+        { id: 19, category: "1.1. Presence", q: "A 49-year-old woman struggling to stick to a smoking quit plan due to her mother's stroke says: “I do not want to end up like her.” Coach replies: “You are still dedicated to quitting... How might you continue on your path despite your recent difficulty?” Which of the following skills is the coach most likely demonstrating?", options: ["Being curious without assuming", "Bottom-lining", "Conveying unconditional positive regard", "Identifying values"], answer: 2, logic: "Accepting/valuing the client without conditions regardless of struggles." },
+        { id: 20, category: "5.3. Chronic disease", q: "According to the Centers for Disease Control and Prevention, which of the following is the most common preventable cause of death in the United States?", options: ["Alcohol use", "Firearm-related incidents", "Illicit drug use", "Tobacco use"], answer: 3, logic: "CDC identifies cigarette smoking as the leading preventable cause of death." },
+        { id: 21, category: "1.5. Early sessions", q: "A 36-year-old woman enrolls in telephone-based coaching. During the first session, the coach asks the client to introduce themselves and describe what they hope to accomplish. Which of the following additional topics is most appropriate to initially discuss during this session?", options: ["Additional worksite support", "Client’s self-assessment of health status", "SMART goals", "Work stress impact on health"], answer: 1, logic: "Wellness assessments create a nonjudgmental entry point for visioning." },
+        { id: 22, category: "1.1. Presence", q: "A 56-year-old man meets the coach at work to explore strategies to improve energy. Which of the following is the most appropriate question to invite the client to provide feedback for the coach?", options: ["“How can I best support you moving forward?”", "“I think our sessions are going great so far. What do you think?”", "“If you were not happy with my coaching, you would share with me, right?”", "“Can you please email me your feedback on my coaching?”"], answer: 0, logic: "Empowers the client to share what is working and what they need." },
+        { id: 23, category: "5.3. Disease", q: "According to the Centers for Disease Control and Prevention, which of the following risk factors for heart disease is often called a “silent killer” because of a lack of symptoms?", options: ["Diabetes", "High blood pressure", "Obesity", "Tobacco use"], answer: 1, logic: "High blood pressure typically has no symptoms." },
+        { id: 24, category: "5.3. Disease", q: "According to the Centers for Disease Control and Prevention, which of the following is most likely to decrease how much a person drinks on an occasion by 25%?", options: ["Smartphone notifications", "Insurance coverage", "Community activities", "Alcohol screening and brief counseling"], answer: 3, logic: "SBI is a preventative service reducing excessive use." },
+        { id: 25, category: "3.1. Facilitation", q: "A 38-year-old man becomes agitated and begins pacing, mumbling: “The doctors are totally off base... if I give them a chance, they will ruin my knee!” Which of the following is the most appropriate next step by the coach?", options: ["Ask the client to compose himself", "Explore the client’s emotions and apply decisional balance", "Mirror the client’s agitation", "Point out inappropriate emotions"], answer: 1, logic: "Validates emotions while transitioning into structured self-awareness." },
+        { id: 26, category: "1.1. Presence", q: "An 87-year-old woman wants to socialize but lacks reliable transportation. She mentions a sewing group and a friend who goes to church. Which of the following is the most appropriate response by the coach to move toward action?", options: ["“Great start. What other ideas can you think of?”", "“Maybe your friend can also help you get to the senior center.”", "“Should we call your friend now so you do not forget?”", "“Would you be willing to ask your friend for a ride to church?”"], answer: 3, logic: "Helps client name commitments to clarify direction and agency." },
+        { id: 27, category: "4.3. Ethics", q: "A coach deliverying a presentation to business owners finds relevant content online. The presentation will be copied as a handout. Which of the following is the most appropriate course of action by the coach?", options: ["Cite the original works on the handouts", "Copy content without citations", "Offer citations to interested attendees later", "Provide citations verbally"], answer: 0, logic: "NBHWC requires recognizing/honoring the contributions of others." },
+        { id: 28, category: "5.3. Chronic disease", q: "Which of the following risk factors is most likely increased by metabolic syndrome?", options: ["Cardiovascular disease", "COPD", "Fibromyalgia", "Rheumatoid arthritis"], answer: 0, logic: "Increases risk for heart disease, diabetes, and stroke." },
+        { id: 29, category: "5.3. Chronic disease", q: "Which of the following is the primary cause of overweight and obesity?", options: ["Caloric imbalance", "Comorbidities", "Economic factors", "Hereditary traits"], answer: 0, logic: "Energy imbalance (eating more than utilized) is the primary cause." },
+        { id: 30, category: "5.3. Chronic disease", q: "Excess fat in which of the following areas of the body is most likely to increase an individual’s risk for obesity-related diseases?", options: ["Abdomen", "Hips", "Lower extremities", "Upper extremities"], answer: 0, logic: "Abdominal/central fat distribution is linked to type 2 diabetes and CV disease." },
+        { id: 31, category: "5.3. Chronic disease", q: "According to the American Psychiatric Association, which is the most prevalent mental disorder among U.S. adults?", options: ["Anxiety disorder", "Bipolar disorder", "Major depressive disorder", "PTSD"], answer: 0, logic: "Anxiety affects nearly 30% of adults." },
+        { id: 32, category: "5.3. Chronic disease", q: "A 43-year-old woman works 12-hour night shifts and sleeps inconsistently. The coach asks what the client knows about sleep and weight management. What is the most appropriate first step in this model?", options: ["Assist with food journal", "Track sleep and suggest makeup days", "Explore feelings about sleep meds", "Elicit what the client already knows (Ask-Offer-Ask)"], answer: 3, logic: "Ask-Offer-Ask model: elicit what client already knows first." },
+        { id: 33, category: "3.5. Self-efficacy", q: "A 40-year-old man cleaning up his office succeeds and shares this accomplishment but asks: “I cleaned my office, but how will that help me lose weight?” Which response best encourages behavioral stretch?", options: ["“Cleaning clutter creates space.”", "“How does it feel to have a clean office?”", "“Success in one area leads to success in others.”", "“What did you learn?”"], answer: 3, logic: "Encourages reflection on learning to increase general self-efficacy." },
+        { id: 34, category: "1.5. Early sessions", q: "A 32-year-old woman says, “My son has a fatal blood cancer... What should I do next?” Her voice is calm, but she appears distressed. Which is the most appropriate coach approach?", options: ["Ask how husband is handling things", "Ask if referral to therapist would help", "Ask permission for info on support groups", "Ask what the client envisions would be the best use of their time together today"], answer: 3, logic: "Listens for what matters most to the client right now." },
+        { id: 35, category: "2.3. MI Concepts", q: "A 54-year-old woman sets a goal to walk instead of a cigarette and rates confidence at 6 out of 10. Which response best elicits change talk?", options: ["“A 6 is high since you love relaxing.”", "“A 6 is good; curious how it goes.”", "“How can we adjust your goal?”", "“What makes your confidence a 6 instead of a 4?”"], answer: 3, logic: "Drawing out existing strengths/reasons for confidence (change talk)." },
+        { id: 36, category: "3.1. Facilitation", q: "The client rates the importance of weight loss as 3 out of 10, saying: “It’s only a 3… maybe I don’t want to lose weight after all.” Which response is most appropriate?", options: ["“A 3 means not ready to change.”", "“If it’s not important, choose a new goal.”", "“It’s okay to feel that way.”", "“What makes your rating a 3 and not a 1?”"], answer: 3, logic: "Uses scaling to acknowledge current motivation and elicit change talk." },
+        { id: 37, category: "3.2. Communication", q: "A 42-year-old woman has labs showing recurrence of colon cancer. She begins to cry: “I just don’t think I can do this horrible chemotherapy again.” Which is the most appropriate coach response?", options: ["Affirm she has the strength", "Be present to hold space", "Encourage new goals", "Express how unfair recurrence is"], answer: 1, logic: "Holding space fosters deep trust and listening." },
+        { id: 38, category: "3.4. Awareness", q: "A 31-year-old woman is disappointed in her progress and says she feels like a failure and lacks willpower. Which coach response best addresses self-defeating perceptions?", options: ["“Changing habits takes time.”", "“I hear your frustration… you feel like a failure…”", "“Want to brainstorm ideas?”", "“I disagree that you are a failure.”"], answer: 1, logic: "Reflection acknowledges and validates feelings." },
+        { id: 39, category: "1.5. Early sessions", q: "A 32-year-old woman wants the coach to provide guidance on weight and stress. The coach gives the client an exercise to help her distinguish between which goals are important and which goals are urgent. Which of the following best describes the purpose of this exercise?", options: ["Clarify next steps", "Define long-term goals that will lead to desired outcomes", "Explore willingness to commit", "Identify assumptions"], answer: 1, logic: "Translates vision into focused, meaningful goals." },
+        { id: 40, category: "1.6. Follow-up", q: "A 27-year-old woman says she will walk more next week. Which is the most appropriate SMART-goal-building question?", options: ["“Do you have a friend to walk with?”", "“How will you feel if you lose weight?”", "“How will you know when you have met your goal?”", "“On a scale of 0–10, how pleased will you be?”"], answer: 2, logic: "Explores the 'how' and measurability of the goal." },
+        { id: 41, category: "1.5. Early sessions", q: "A 45-year-old woman misses her second session and asks for Sunday or late night appointments outside office hours. What is the MOST appropriate next step?", options: ["Advise office to expand hours", "Assess client readiness", "Inform client coaching is not provided outside established hours", "Mention an exception"], answer: 2, logic: "Maintaining integrity and professional boundaries." },
+        { id: 42, category: "3.6. Expanding conversation", q: "A 41-year-old man says: “I’ve smoked for a long time… I’m tired of how my clothes smell. It’s expensive… but I’m ready to try.” What is the most appropriate coach response?", options: ["“How does knowing all of this impact your plan to quit?”", "“How many cigarettes do you smoke?”", "“What is your timeline?”", "“What might you do with money saved?”"], answer: 0, logic: "Evokes deeper purpose and planning language." },
+        { id: 43, category: "5.3. Chronic disease", q: "A 33-year-old man has a BMI of 25 kg/m². This BMI falls within which range?", options: ["Underweight", "Normal", "Overweight", "Obese"], answer: 2, logic: "Overweight is 25 to <30." },
+        { id: 44, category: "4.3. Ethics", q: "A 62-year-old man has low back pain and numbness. The coach, who is a triathlete, replies: “If you are interested, I have some great exercises that will help your back.” According to the NBHWC Code of Ethics, this violates which principle?", options: ["Accurate representation of expertise", "Balancing multiple roles", "Conflict of interest", "Professional boundaries"], answer: 0, logic: "Exceeds scope of practice without clinical training." },
+        { id: 45, category: "4.4. Legal", q: "Which best explains the purpose of the HIPAA Security Rule?", options: ["Defines private medical info", "Describes safeguards to ensure protection of ePHI", "Outlines note inclusion", "Provides safety guidelines"], answer: 1, logic: "Protects electronic protected health information." },
+        { id: 46, category: "1.4. Prep", q: "A coach works from home during construction. Background noise from family is sometimes heard during sessions. What are the most appropriate actions?", options: ["Review client materials", "Silence cellphones", "Take a moment to focus", "Use a headset and create environmental boundaries"], answer: 3, logic: "Upholds session integrity and professionalism." },
+        { id: 47, category: "5.3. Disease", q: "A 45-year-old man meets the coach for biometric screening. BMI is 29 kg/m². What is the appropriate BMI classification?", options: ["Underweight", "Normal", "Overweight", "Obese"], answer: 2, logic: "25-29.9 is overweight." },
+        { id: 48, category: "3.5. Self-efficacy", q: "A 38-year-old woman drinks alcohol to calm nerves. She asks for coping ideas. Which response is most appropriate?", options: ["“Is it dangerous around children?”", "“Drinking eases nerves.”", "“I’m happy you want to give up alcohol.”", "“What other ways have you used in the past to manage stress?”"], answer: 3, logic: "Invites exploration of past coping strategies and self-efficacy." },
+        { id: 49, category: "1.1. Presence", q: "A 46-year-old woman says: “I have struggled with my weight all my life. I gain it, lose it, and gain it again.” The coach responds: “That must be very frustrating.” Which skill is the coach demonstrating?", options: ["Being patient", "Bottom-lining", "Eliciting motivation", "Empathizing"], answer: 3, logic: "Validates emotion with empathy." },
+        { id: 50, category: "4.3. Ethics", q: "A human resources director requests that the coach divulge the content of a coaching session for an employee. Which of the following is the most appropriate response by the coach?", options: ["“I can email a summary.”", "“I will ask my client.”", "“The content of coaching sessions is confidential.”", "“What would you like to know?”"], answer: 2, logic: "Maintains strictest level of confidentiality." },
+        { id: 51, category: "4.4. Legal", q: "A 28-year-old coach steps away from the desk in a private office inside a health insurance company. Which action is necessary for HIPAA compliance?", options: ["Ask assistant to block visitors", "Lock the computer before leaving", "Remind coworkers of confidentiality", "No action needed"], answer: 1, logic: "Prevents unauthorized access to client data (HIPAA)." },
+        { id: 52, category: "4.3. Ethics", q: "A 28-year-old woman says: “I’m ready to stop seeing my therapist and continue coaching instead.” Which is the MOST appropriate coach response?", options: ["“We should celebrate.”", "“I'm concerned I'd have to take that role.”", "“I'm thrilled but therapy helps too.”", "“Have you discussed a plan with your therapist for ending therapy?”"], answer: 3, logic: "Protects psychological safety and respect for other professionals." },
+        { id: 53, category: "3.2. Communication", q: "A 78-year-old woman mentions group fitness and transportation issues. The coach listens quietly. Which skill is being used?", options: ["Acknowledging state of being", "Benevolence", "Showing empathy", "Using silence appropriately"], answer: 3, logic: "Gives client time to process and reflect." },
+        { id: 54, category: "2.3. MI Concepts", q: "A 50-year-old man who does not know how to cook asks: “What simple healthy meal could I make for my new girlfriend?” The coach responds by asking if he would like to brainstorm an entrée together. Which concept?", options: ["Acceptance", "Autonomy", "Collaboration", "Compassion"], answer: 2, logic: "Elicits client expertise and choices through partnership." },
+        { id: 55, category: "1.1. Presence", q: "A 25-year-old graduate student says: “Graduate school is so demanding… I can’t figure out how to get everything done.” What is the most appropriate initial response?", options: ["“I went to therapy…”", "“Maybe you're making it harder.”", "“Of course you're stressed.”", "“You are committed to your responsibilities…”"], answer: 3, logic: "Responds to underlying meaning and warmth." },
+        { id: 56, category: "1.5. Early sessions", q: "A 32-year-old woman begins describing issues (divorce, lack of sleep, stress). The coach has already given an empathic reflection. What is the MOST appropriate next response?", options: ["“My divorce affected exercise too.”", "Ask about sleep challenges", "Ask about divorce circumstances", "“Which of these topics would you like to address first?”"], answer: 3, logic: "Strategic question to help client identify focus." },
+        { id: 57, category: "1.6. Follow-up", q: "At the end of a session about life and goals, the coach summarizes. Which is the most appropriate follow-up question?", options: ["“How can I help facilitate goals?”", "“To help choose focus areas…”", "“What is one takeaway you learned from today?”", "“What concerns you most?”"], answer: 2, logic: "Reinforces active learning and meaning-making." },
+        { id: 58, category: "3.2. Communication", q: "A 30-year-old woman with hypertension wants to lose 30 lb in 5 weeks for her wedding. Which response is most appropriate?", options: ["“I hear how motivated you are. What ideas do you have next?”", "“I think 5 kg is more realistic.”", "“You might regain it.”", "“That plan is aggressive.”"], answer: 0, logic: "Reflects enthusiasm without judgment and uses open question." },
+        { id: 59, category: "4.3. Ethics", q: "A 19-year-old is transitioning to college. Parents paid for coaching. After session four, the mother requests an update. Most appropriate next step?", options: ["Adhere to confidentiality", "Contact client for permission", "Provide records to mother", "Schedule appointment with mother"], answer: 0, logic: "Confidentiality applies regardless of who pays." },
+        { id: 60, category: "3.4. Awareness", q: "A 28-year-old woman says: “I totally blew it. I met my friends for happy hour... I felt guilty the rest of the week.” To reframe this statement, which response is most appropriate?", options: ["“Everyone makes mistakes.”", "“I hear your disappointment. What are some good choices you made last week?”", "“Look on the bright side.”", "“Guilt can inspire change.”"], answer: 1, logic: "Validates feelings while inviting exploration of positives." },
+        { id: 61, category: "1.5. Early sessions", q: "A 48-year-old man completed a wellness assessment before his first session. Most appropriate next step?", options: ["Advise major concerns", "Align results with guidelines", "Explore what the client learned from completing the assessment", "Support resource needs"], answer: 2, logic: "Assessment supports self-discovery, not diagnosis." },
+        { id: 62, category: "3.1. Facilitation", q: "A 60-year-old woman says: “I can lose weight, but I can’t keep it off.” The coach responds: “I would like to learn more about what life was like for you when you were successful.” Which best describes this?", options: ["Attentive", "Attuned", "Curious without assuming", "Empathy"], answer: 2, logic: "Encourages sharing of past successful experiences." },
+        { id: 63, category: "4.3. Ethics", q: "A 29-year-old man reports discomfort because his personal trainer revealed being gay. Most appropriate next step?", options: ["Acknowledge the dilemma and explore alternatives", "End the coaching relationship", "Inquire about origins of beliefs", "Sympathize with discomfort"], answer: 0, logic: "Nonjudgmental approach supporting next steps." },
+        { id: 64, category: "3.1. Facilitation", q: "A 62-year-old woman asks: “What are ways to remember to take my medications?” Most appropriate initial response?", options: ["“How often do you remember?”", "“Other clients use pill boxes.”", "“There are lots of tools.”", "“Would it be helpful to brainstorm some ideas together?”"], answer: 3, logic: "Brainstorming helps explore multiple solutions." },
+        { id: 65, category: "1.5. Early sessions", q: "An 84-year-old woman fears dialysis and hopes to live to see her great-granddaughter graduate in 4 years. Visioning question?", options: ["“How important is avoiding dialysis?”", "“How will it feel to attend graduation?”", "“What do you know about your condition?”", "“What one thing might improve things?”"], answer: 1, logic: "Connects client with what matters most (graduation)." },
+        { id: 66, category: "4.3. Ethics", q: "A 24-year-old non-binary client did not fill out intake because it forced a male/female choice. Response?", options: ["Acknowledge emotions and invite preferred pronouns", "Apologize and move on", "Refer to another coach", "Say it was a standard form"], answer: 0, logic: "Validates experience and supports inclusive care." },
+        { id: 67, category: "4.3. Ethics", q: "A coach reacts negatively to a transitioning client and recommends counseling to “sort things out.” Violates?", options: ["Not a violation", "Not a violation because anxiety", "Violates code - discriminates against identity", "Violates code - outside scope"], answer: 2, logic: "Coaches must refrain from discriminatory behavior." },
+        { id: 68, category: "1.5. Early sessions", q: "A 55-year-old woman meets with the coach at the community wellness center for her second session. The client is a caregiver for both her elderly parents and her school-aged children. She says she is struggling with weight loss and feels scattered. Which of the following is the most appropriate next step by the coach?", options: ["Explain stress impacts weight", "Explore discrepancies between values and goals", "Invite expert perspectives", "Use a confidence ruler"], answer: 1, logic: "Identifies gap between present and desired state." },
+        { id: 69, category: "5.3. Disease", q: "A 72-year-old man reports walking to the mailbox twice daily as his only exercise. Which of the following are risk factors outside his control?", options: ["Age and sex", "Exercise and age", "Family history and exercise", "Diet and stress"], answer: 0, logic: "Non-modifiable factors include age, sex, race, history." },
+        { id: 70, category: "5.3. Disease", q: "A 53-year-old woman mentions workplace screening showed BP was 160/95 mmHg. Most appropriate next response?", options: ["Ask what next steps she would like to take regarding BP", "Instruct her to take BP at home", "Redirect back to insomnia", "Stop session and make urgent appointment"], answer: 0, logic: "Ask-Offer-Ask aligns with client-led choice for non-emergencies." },
+        { id: 71, category: "1.5. Early sessions", q: "A 36-year-old woman with type 2 diabetes says: “It has been a very difficult year.” Most appropriate coach response?", options: ["“What can you do to prevent hospitalization?”", "“What is the impact on your life?”", "“What makes managing most difficult?”", "“What would a good year look like?”"], answer: 3, logic: "Visioning identifies the gap to move forward." },
+        { id: 72, category: "5.3. Disease", q: "According to the CDC, which most increases high blood pressure risk?", options: ["Being underweight", "A high-sodium diet", "Inadequate sleep", "Less than 250 min activity"], answer: 1, logic: "Diet (high sodium, low potassium) is a major risk." },
+        { id: 73, category: "5.3. Disease", q: "A 45-year-old man has BP of 160/110 mmHg and feels short of breath when walking up stairs. Most appropriate next step?", options: ["Advise him to go directly to the emergency department", "Ask about family history", "Ask him to contact someone for a ride", "Suggest he visit PCP within a week"], answer: 0, logic: "Symptoms indicate hypertensive emergency (AHA: call 911)." },
+        { id: 74, category: "5.3. Disease", q: "A 50-year-old woman with BMI of 26 says she does not understand what the number means. How is this classified?", options: ["Underweight", "Normal", "Overweight", "Obese"], answer: 2, logic: "25-29.9 is overweight." },
+        { id: 75, category: "1.5. Early sessions", q: "A 36-year-old woman sharing she is going through divorce and has increased drinking/smoking. Response?", options: ["Healthier strategies?", "Impact explained?", "“I hear your grieving the loss... how can I best support you?”", "Reducing alcohol starting?"], answer: 2, logic: "Acknowledges hardship and invites client needs." },
+
+        // Set 2 (76-150) - FULL SCENARIOS ADDED
+        { id: 76, category: "MI Techniques • 3.3", q: "A client worried because her husband keeps unhealthy snacks at home says: “… I know I’m going to be tempted when I see my husband’s cookies in the cupboard.” Coach reflects. Next response?", options: ["“Maybe you can find a healthier cookie option.”", "“This goal may be too big.”", "“What will you do when that happens?”", "“Where else can you keep snacks?”"], answer: 2, logic: "Anticipates barriers and empowers client planning." },
+        { id: 77, category: "Emotional Awareness • 3.4", q: "A 40-year-old woman tearfully shares that she had overeaten the previous day. Which of the following is the most appropriate initial response by the coach?", options: ["“Everyone overeats occasionally.”", "“I see your tears; tell me more about what you are feeling.”", "“It sounds like you are struggling with stress.”", "“Would you like a therapist recommendation?”"], answer: 1, logic: "Invite client to recognize the emotion they're feeling." },
+        { id: 78, category: "Self-Management • 3.10", q: "A client reports that his father, who died at the age of 48, was overweight and a heavy smoker. The coach’s own father had similar factors and died 2 years ago. Which is the most appropriate initial step?", options: ["Assess ability to be fully present and self-manage emotions", "Provide evidence-based risk info", "Share the personal story to motivate", "Ignore memories"], answer: 0, logic: "Self-awareness allows coach to stay present for client." },
+        { id: 79, category: "Final Session • 3.6", q: "A 25-year-old woman consistently exercises and feels confident about her current health. She says she plans to join her friends in training for a half marathon. Most appropriate next step?", options: ["Ask about training plan progress", "Elicit satisfaction feedback", "Explore future goals", "Invite her to reflect on lessons learned during coaching"], answer: 3, logic: "Final sessions honor growth and reflective closure." },
+        { id: 80, category: "Action Planning • 3.2", q: "A 52-year-old man brings two recipes with him and plans to set a goal to cook dinner on Tuesday and Thursday nights. After affirming the client’s decision, which is the most appropriate next step?", options: ["Readiness 0-10", "Grocery list", "Explore what additional steps are needed to cook on two nights", "Other 5 nights?"], answer: 2, logic: "Identifies barriers and supports for specific goals." },
+        { id: 81, category: "Visioning • 3.13", q: "A 30-year-old woman speaks with the coach because she wants to lose weight. Which is the most appropriate initial step to help her create a vision?", options: ["Past loss?", "Journaling?", "Identify specific goal", "Ask what would be possible if she lost weight"], answer: 3, logic: "Visioning explores possibilities and desired outcomes." },
+        { id: 82, category: "Ask-Offer-Ask • 3.14", q: "A 59-year-old man had cardiac bypass surgery 3 weeks ago. The coach is not familiar with bypass procedures. Which is the most appropriate approach?", options: ["Ask what he knows about postoperative precautions", "Disclose unfamiliarity", "Key interest areas", "Daily activity ideas"], answer: 0, logic: "Elicits client understanding and guides coaching." },
+        { id: 83, category: "Bottom-Lining • 3.17", q: "A 25-year-old man tells several stories and shares personal details about coworkers. The coach notices the session is not progressing. Which technique?", options: ["Bottom-lining", "Open-ended question", "Simple reflection", "Summarizing"], answer: 0, logic: "Refocuses the conversation on what matters most." },
+        { id: 84, category: "Strengths Review • 3.6", q: "A 48-year-old woman goal is to increase physical activity and lose weight. After affirming her past efforts, what is the most appropriate next step?", options: ["Brainstorm", "History gaps", "Review assessment results, health status, and limitations", "Focus areas choose"], answer: 2, logic: "Strengths-based lens supports informed goal setting." },
+        { id: 85, category: "Past Success • 3.18", q: "A 57-year-old woman says she can’t seem to fit self-care into her day. After reflecting her statement, which response is best?", options: ["“Are you feeling guilty?”", "“Describe what it was like when you used to fit in self-care activities.”", "“Daily schedule?”", "“Support groups?”"], answer: 1, logic: "Connecting to past success builds insight/confidence." },
+        { id: 86, category: "Self-Efficacy • 3.5", q: "Together, coach and client have brainstormed sleep steps. Client: “Turning off electronics earlier was difficult, but I saw the benefits.” Response?", options: ["Sleep study?", "Environment change?", "Which option will you be able to sustain?", "My ideas?"], answer: 2, logic: "Helps client evaluate options for sustainability." },
+        { id: 87, category: "Agreement • 1.1", q: "A 53-year-old woman wants the coach to plan a menu and tell her where to shop. Which of the following is the most appropriate next step?", options: ["Identify stores", "Vegan menu plan", "Describe the coaching process, roles, and responsibilities", "Research cookbooks"], answer: 2, logic: "Initial sessions clarify expectations and partnership." },
+        { id: 88, category: "Self-Efficacy • 3.5", q: "A 63-year-old woman walked for 20 minutes once last week. Which of the following is the most appropriate next step?", options: ["Ask her to reflect on the time she walked", "Support system?", "Importance remind", "Believe in you"], answer: 0, logic: "Focusing on success enhances confidence." },
+        { id: 89, category: "Psychological Safety • 3.11", q: "A 42-year-old woman wants to return to school but worries about time. Which is the most appropriate initial response?", options: ["Accountability guarantee", "Right time?", "Worked with similar person", "“What do you hope to gain from coaching to support this decision?”"], answer: 3, logic: "Establishing safety and eliciting hopes aligns the partnership." },
+        { id: 90, category: "Growth Mindset • 3.7", q: "Coach: “It sounds like this is hard for you. You are not strong at marketing yourself yet. You are exploring new horizons...” Demonstrates?", options: ["Appreciative inquiry", "Growth mindset", "Positive psych", "Self-determination"], answer: 1, logic: "Emphasizes effort and potential for growth." },
+        { id: 91, category: "Self-Management • 3.10", q: "A 54-year-old woman is grieving the sudden loss of her husband. The coach is recently widowed and becomes distracted by memories. Next step?", options: ["Avoid topic", "Share personal loss", "Educate", "Notice internal experience and stay present"], answer: 3, logic: "Presence requires self-management of coach emotions." },
+        { id: 92, category: "Support planning • 3.9", q: "A 34-year-old woman spouse drinks coffee throughout the day, making insomnia change challenging. Response?", options: ["“What are some ways your spouse might support you?”", "Negative effects?", "Get outside?", "Switch decaf?"], answer: 0, logic: "Supports identifying needed social support." },
+        { id: 93, category: "Biometric • 2.2", q: "A 38-year-old man: BMI 24, Blood pressure 134/84, Fasting blood glucose 81. Which is outside normal range?", options: ["Blood pressure", "Blood sugar", "BMI", "Weight"], answer: 0, logic: "134/84 is elevated/Stage 1 hypertension." },
+        { id: 94, category: "Continuum • 2.3", q: "A 47-year-old man with type 2 diabetes wants to discontinue medication by losing weight. Point on continuum?", options: ["Disability", "Symptoms", "Neutral", "Growth"], answer: 3, logic: "Pursuing self-improvement reflects wellness 'growth'." },
+        { id: 95, category: "Presence • 3.1", q: "A 39-year-old man arrives 10 minutes late, out of breath and overwhelmed. Which response is most appropriate?", options: ["Check in differently?", "Wait 5 mins", "Settling exercise", "“What would help you transition smoothly into this session?”"], answer: 3, logic: "Centers presence and invites emotional safety." },
+        { id: 96, category: "SDOH • 2.5", q: "A client neighborhood without a grocery store relies on public transportation. Application of SDOH awareness?", options: ["Motivation", "Explore affordable frozen/shelf-stable locally", "Creative reframe", "Meal plan"], answer: 1, logic: "Acknowledges structural barriers and supports realistic adaptation." },
+        { id: 97, category: "Boundaries • 1.2", q: "A businessman—with whom the coach previously had a brief sexual relationship—asks to become a coaching client. Response?", options: ["Explain candidate bad", "Start coaching", "Phone sessions only", "Offer referrals to other credentialed coaches"], answer: 3, logic: "Avoiding dual relationships protects client safety." },
+        { id: 98, category: "TTM • 2.4", q: "A 49-year-old man says, “My blood sugar was a little high, but I feel great and I don’t think it’s a problem.” Stage?", options: ["Precontemplation", "Contemplation", "Preparation", "Action"], answer: 0, logic: "Does not yet perceive a need for change." },
+        { id: 99, category: "Autonomy • 3.8", q: "A 25-year-old woman prefers tracking her habits in a paper calendar rather than a fitness tracker. Construct?", options: ["Autonomy", "Relatedness", "Self-compassion", "Willpower"], answer: 0, logic: "Reinforces client ownership of decisions." },
+        { id: 100, category: "Referral • 1.6", q: "A 45-year-old woman laid off, appears sad, slumped, disheveled, and says: “Life is too hard right now; I don’t see it getting better.” Next step?", options: ["Referral to mental health professional", "Reach out support", "Redirect positive", "Reflect strengths"], answer: 0, logic: "Presentation indicates possible depression needing referral." },
+        { id: 101, category: "Reflection • 3.16", q: "A 50-year-old woman overeats when stressed and appears overwhelmed. Which is the most appropriate coach response?", options: ["Losing weight benefits info", "Direction from me?", "Ready to lose weight", "“You believe it will not be easy, and you would like to lose weight.”"], answer: 3, logic: "Double-sided reflection acknowledges struggle and desire." },
+        { id: 102, category: "Habit Science • 2.4", q: "A client says, “I try starting a morning walk, but after three days I forget. Maybe I’m just not disciplined.” Response reflects neuroplasticity?", options: ["Discipline improves", "“Your brain strengthens habits through repetition and cues, not willpower alone.”", "Brain types", "Restart later"], answer: 1, logic: "Habits form through consistent cues and repetition." },
+        { id: 103, category: "PA Guidelines • 2.1", q: "To receive health benefits, at least how many minutes of moderate-intensity aerobic activity per week for adults?", options: ["90", "150", "180", "210"], answer: 1, logic: "Standard guideline is 150 minutes per week." },
+        { id: 104, category: "Confidentiality • 1.1", q: "A 36-year-old woman asks how the coach can share information with her doctor. Response?", options: ["I cannot share", "“You can sign a release form allowing me to share information.”", "Share only medical", "Verbal approval"], answer: 1, logic: "Signed release is required for information sharing." },
+        { id: 105, category: "Self-Efficacy • 3.5", q: "A 30-year-old woman rates her confidence in 20 mins relaxation daily at a 7. Which is the most appropriate next response?", options: ["Sure?", "Increase to 10?", "“Why did you rate your confidence a 7 and not a 5?”", "Why a 7 and not a 9?"], answer: 2, logic: "Focuses on existing strengths supporting current confidence." },
+        { id: 106, category: "Autonomy • 3.11", q: "A 52-year-old woman calls immediately expressing fear that her blood sugar is too high. Next step?", options: ["Adjust eating?", "“What would you like to focus on today?”", "Goal is sleep", "Diabetes concerns"], answer: 1, logic: "Letting client choose honors autonomy." },
+        { id: 107, category: "Reflective Practice • 3.6", q: "A 28-year-old advertising executive, final session. What is the most appropriate next step to help her reflect?", options: ["Stay positive", "Uncompleted goals", "Testimonial?", "Ask what she has learned from the coaching experience"], answer: 3, logic: "Reflection deepens insight and reinforces change." },
+        { id: 108, category: "Grounding • 3.1", q: "A 66-year-old man arrives late, on his phone, and frazzled. What is the most appropriate strategy?", options: ["Extend session", "Leave phone", "Time management", "Offer a brief deep-breathing exercise"], answer: 3, logic: "Grounding helps client become present." },
+        { id: 109, category: "Safety • 2.2", q: "A 52-year-old woman continues sweating 3 hours later, feels dizzy, heart racing, and words sound slurred. Response?", options: ["Call later", "See doc soon", "Reschedule", "“You need urgent care immediately; symptoms may indicate very low blood sugar.”"], answer: 3, logic: "Symptoms signal medical emergency (hypoglycemia)." },
+        { id: 110, category: "Reframing • 3.15", q: "A 50-year-old man says his son frequently reminds him to exercise, which annoys him. Which response reframes?", options: ["Don't like nagging", "Want to be active", "“Your son seems to care about your health.”", "Broken record"], answer: 2, logic: "Shifts perception from annoyance to support." },
+        { id: 111, category: "Strengths • 3.6", q: "A client’s top strengths are fairness and creativity. Low strengths are perseverance and zest. Approach?", options: ["Social interactions", "Gratitude journal", "Breathing", "Explore strengths to find creative ways to meet goals"], answer: 3, logic: "Strengths increase motivation/confidence." },
+        { id: 112, category: "Skill Transfer • 3.21", q: "A 46-year-old man shares his successful morning routine success. Coach asks: “What helped you be consistent with your morning habits?” Purpose?", options: ["Values link", "Apply his skills to a new situation", "Decisional balance", "Strengths remind"], answer: 1, logic: "Transfers skills from one domain to another." },
+        { id: 113, category: "Growth Mindset • 3.7", q: "A 52-year-old woman says she can succeed because she has done it before. Which framework?", options: ["Decisional balance", "Growth mindset", "MI", "Social cognitive theory"], answer: 1, logic: "Growth mindset focuses on capability and learning." },
+        { id: 114, category: "Visioning • 3.13", q: "A 45-year-old man says: “I’ve been smoking for so long. It’s hard to imagine giving it up, but I know I want to quit.” Response?", options: ["How much spent?", "“What do you imagine could be possible for you when you quit?”", "Health risks?", "Quit for one day?"], answer: 1, logic: "Elicits visioning toward a desired future." },
+        { id: 115, category: "Ask-Offer-Ask • 3.14", q: "A 50-year-old woman wants to make her health a priority. The coach starts exploring wellness. Most appropriate question to begin?", options: ["“What does ‘wellness’ mean to you at this time in your life?”", "Past health problems?", "Family history?", "Risk factors?"], answer: 0, logic: "Elicits client's baseline understanding/meaning." },
+        { id: 116, category: "Simple Reflection • 3.16", q: "A 79-year-old man worries he’ll forget to write the grocery list on weekends. Response?", options: ["Memory issues?", "Aging research", "Worst case?", "“You are worried you might not follow through because you may forget.”"], answer: 3, logic: "Accurately acknowledges the specific concern." },
+        { id: 117, category: "Records • 1.1", q: "A 64-year-old woman asks to review the coach’s notes from her first few sessions. Response?", options: ["After finishing", "Not comfortable", "Forward looking better", "“I can bring the notes to our next session and we can review them together.”"], answer: 3, logic: "Access to notes is a right; review supports partnership." },
+        { id: 118, category: "Ask-Offer-Ask • 3.14", q: "A 48-year-old man asks about PSA screening: “Should I be worried?” Response?", options: ["No big deal", "Pamphlet review", "Inappropriate for me", "“Tell me what you currently know about PSA tests.”"], answer: 3, logic: "Elicits client's current knowledge baseline." },
+        { id: 119, category: "Ask-Offer-Ask • 3.14", q: "A 62-year-old man says: “My doctor wants me to see you for gout. He tells me what to do, and he says you can help.” After a simple reflection, what next?", options: ["“What do you know about gout?”", "Goals most important?", "Role you want to play?", "Small steps?"], answer: 0, logic: "Starts with client perspective/knowledge." },
+        { id: 120, category: "Goal Setting • 3.2", q: "A 35-year-old man loves the visioning process and resists setting a first goal. Which response is most appropriate?", options: ["Can't support without goal", "Manifest vision", "Time to move", "“What part of this vision could you turn into reality first?”"], answer: 3, logic: "Narrows vision into an actionable starting point." },
+        { id: 121, category: "Past Success • 3.18", q: "A 36-year-old woman wants to avoid further setbacks after running injuries. Which question?", options: ["“What helped you avoid injuries in the past?”", "Physical therapist?", "PCP role?", "Who supported?"], answer: 0, logic: "Past success builds confidence and strategy." },
+        { id: 122, category: "Goal Adjustment • 3.2", q: "A 34-year-old business executive is stressed and worries about maintaining weight-loss progress. The coach suggests it may help to reconsider expectations. Reflects?", options: ["Adjusting goals", "Affirming ambivalence", "Positive amplify", "Fostering self-compassion"], answer: 0, logic: "Supports realistic planning for challenging periods." },
+        { id: 123, category: "Collaboration • 1.4", q: "A coach attends a cardiology conference where new blood pressure guidelines were announced. What is the most appropriate next step?", options: ["Give info immediately", "Seminar for coaches", "Consult with the cardiologists in the practice", "Wait for workshop"], answer: 2, logic: "Ensures consistent, accurate medical information." },
+        { id: 124, category: "Agreement • 1.1", q: "Which of the following is mandatory to include in any coaching agreement?", options: ["Client and coach responsibilities", "Testimonials", "Expertise areas", "Guarantee of outcomes"], answer: 0, logic: "Agreements must define roles and responsibilities." },
+        { id: 125, category: "TTM • 2.2", q: "A 55-year-old woman walked three times, exceeding her goal of twice weekly. She wants to walk four times next week. Stage?", options: ["Precontemplation", "Contemplation", "Preparation", "Action"], answer: 3, logic: "Actively performing and increasing the behavior." },
+        { id: 126, category: "Autonomy • 3.8", q: "A 32-year-old woman says her doctor didn’t explain metabolic syndrome fully and she wants to learn more. Response?", options: ["Another appointment?", "How proceed when know more?", "“What can you do to learn more about metabolic syndrome?”", "Website suggestion?"], answer: 2, logic: "Supports autonomy in seeking information." },
+        { id: 127, category: "Presence • 3.1", q: "A phone session with a client is about to begin. A coach has not checked email. What action ensures coach is calm?", options: ["During silence", "Ask permission", "Reply many", "Scan email for any message from this client"], answer: 3, logic: "Supports readiness for current client without distraction." },
+        { id: 128, category: "Boundaries • 1.2", q: "A 54-year-old man consistently arrives late to coaching sessions. Today he is 30 minutes late for a 45-minute session. Response?", options: ["Your time", "“May we take a moment? These late starts feel disrespectful to my time.”", "Make best use", "Still accomplish lot"], answer: 1, logic: "Boundary setting strengthens professional relationship." },
+        { id: 129, category: "Boundaries • 1.2", q: "A coach offers to watch the client’s three children while the client goes out. Which ethical principle is most likely violated?", options: ["Confidentiality", "Conflict of interest", "Professional boundaries", "Scope of practice"], answer: 2, logic: "Dual relationships blur boundaries and create ethical risk." },
+        { id: 130, category: "Scope • 1.3", q: "A personaltrainer-coach believes they are qualified to prescribe a nutrition plan to a client after a webinar. Violation?", options: ["Credentials", "Dual roles", "Conflict", "Scope of practice"], answer: 3, logic: "Coaches cannot prescribe diets or meal plans." },
+        { id: 131, category: "Strengths • 3.6", q: "A 56-year-old woman enthusiastically shares a list of twelve activities she enjoyed in the past. Response?", options: ["No wrong choice", "Ready to move", "“You enjoyed exploring what is possible.”", "Work to do"], answer: 2, logic: "Affirms motivation and supports exploration." },
+        { id: 132, category: "ROI • 1.1", q: "A 36-year-old woman asks: “What if I want you to share information with my doctor?” Correct response?", options: ["I cannot share", "“You can sign a form giving me permission to share information.”", "Medical only", "Verbal okay"], answer: 1, logic: "Signed release required for sharing information." },
+        { id: 133, category: "Growth Mindset • 3.7", q: "A 43-year-old woman reports only taking one deep breath a few times instead of three and feels discouraged. Next step?", options: ["Try again", "Stressful events?", "New goal", "Explore the positive experiences she had when she did take the breath"], answer: 3, logic: "Focusing on what worked reinforces growth mindset." },
+        { id: 134, category: "Discord • 3.11", q: "A 65-year-old man agitated about politics uses expletives and asks the coach about the coach’s beliefs. Response to address discord?", options: ["Passionate also, refer out", "My beliefs won't lower stress", "Support rights", "“It sounds like you have some strong feelings about these issues.”"], answer: 3, logic: "Curiosity (not defensiveness) repairs discord." },
+        { id: 135, category: "Awareness • 3.4", q: "A 45-year-old woman says: “I am disappointed in myself and worried about how my family is being impacted.” Response?", options: ["Manage better", "“This is a difficult time for you. You’re not responding how you’d like, and it’s affecting you and those you care about.”", "Unfortunate setback", "Different tools?"], answer: 1, logic: "Acknowledges whole person and validates feelings." },
+        { id: 136, category: "Accountability • 3.9", q: "A coach must unexpectedly travel for a week due to a family medical crisis. What is the most appropriate action?", options: ["Ask the client how she might get support aside from texting during the coach’s absence", "Other coach respond", "Continue texting", "Inform unavailable"], answer: 0, logic: "Preserves continuity while promoting self-accountability." },
+        { id: 137, category: "Nonverbal • 3.12", q: "A 43-year-old manReviewing his progress he shifts posture, squeezes his fingers, exhales, and appears uneasy. Purpose of naming it?", options: ["Analyzing behavior", "Attending to nonverbal cues", "Problem solving", "Exploring progress"], answer: 1, logic: "Acknowledges and brings awareness to nonverbal signals." },
+        { id: 138, category: "Continuum • 2.3", q: "A 43-year-old man seeking support wellbeing after long-term alcohol struggles has not had alcohol for two weeks. Point?", options: ["Neutral", "Paradigm not moving", "Treatment Paradigm moving toward Neutral Point", "Wellness toward High-Level"], answer: 2, logic: "Moving toward neutral from the treatment/illness side." },
+        { id: 139, category: "Visioning • 3.13", q: "A coach begins each session with a guided imagery exercise in which the client visualizes their “best self.” What is the coach elicting?", options: ["Environment", "Intrinsic motivation", "Mindfulness", "Self-compassion"], answer: 1, logic: "Visioning strengthens intrinsic motivation/belief in possibility." },
+        { id: 140, category: "Prep • 3.1", q: "What should a coach do before a second phone session with a 31-year-old client with HIV?", options: ["Contact PCP", "Review assessments and communications from the client", "Literature review", "Bias self-assess"], answer: 1, logic: "Reviewing materials demonstrates care and continuity." },
+        { id: 141, category: "Ethics • 1.5", q: "A coach is also an aromatherapist and distributor. She frequently recommends her own brand without disclosing financial involvement. Violation?", options: ["Confidentiality", "Conflict of interest", "Consent", "Boundaries"], answer: 1, logic: "Financial interests must be disclosed to client." },
+        { id: 142, category: "Self-Efficacy • 3.5", q: "When asked to rate confidence in a 200 calorie reduction on a 0–10 scale, a 26-year-old man says 6. Next step?", options: ["Brainstorm", "Explore what would increase his confidence", "Accountability", "Resources?"], answer: 1, logic: "6 indicates ambivalence; explore how to strengthen confidence." },
+        { id: 143, category: "Positive Reframe • 3.7", q: "A 47-year-old man in his tenth session for weight loss says, “I must just be lazy; I keep giving up.” Reframe response?", options: ["Learned process?", "“No matter the setbacks, you continue finding new strategies.”", "Not lazy, frustration", "Common experience"], answer: 1, logic: "Uses positive, affirming language to shift identity." },
+        { id: 144, category: "Metrics • 2.2", q: "Which of the following health metrics is a screening measure of body fat based on height and weight?", options: ["Bioelectrical impedance", "Body mass index", "Hydrostatic weighing", "Skinfold"], answer: 1, logic: "BMI is a screening tool based on height/weight." },
+        { id: 145, category: "Bottom-Lining • 3.2", q: "A 56-year-old man proposes several vague steps he will “decide during the week.” This has been his approach for 3 sessions. Next step?", options: ["Ask client to bottom-line one action he can commit to", "Share responsibilities", "Cut commitments", "Support vague desire"], answer: 0, logic: "Specificity increases commitment and reduces avoidance." },
+        { id: 146, category: "Perspective • 3.7", q: "The coach asks, “What new activities might your inner athlete like to try?” Which technique?", options: ["Discerning needs", "Eliciting new perspectives", "Not said", "Energy tuning"], answer: 1, logic: "Invites new possibilities and reframes identity." },
+        { id: 147, category: "Role Modeling • 3.6", q: "Which of the following best describes the reason for a health and wellness coach to “walk the talk”?", options: ["Masterful self-care energy", "Outcomes respect", "Conviction support", "Difficult models"], answer: 0, logic: "Embodied wellness inspires through authenticity/energy." },
+        { id: 148, category: "Autonomy • 3.11", q: "A 56-year-old woman reports increased comfort-food intake after her husband unexpectedly asked for a divorce. Response?", options: ["Stress strategy", "Temptation activity?", "Marriage counselor?", "“You’re going through a lot right now. What would you like to focus on today?”"], answer: 3, logic: "Honors autonomy during emotional crisis." },
+        { id: 149, category: "3.4 Perspective", q: "A client who works at a high-stress bank reports they 'binge' on sweets during the drive home. Coach: 'What one change to your environment would help?' Type?", options: ["Providing advice", "Stimulus control", "Social support", "Willpower boost"], answer: 1, logic: "Environmental changes to reduce cues for bad habits is stimulus control." },
+        { id: 150, category: "5.3 Prevention", q: "According to current guidelines, what is considered a 'normal' blood pressure reading for an adult?", options: ["<120/80 mmHg", "130/80 mmHg", "140/90 mmHg", "120/90 mmHg"], answer: 0, logic: "AHA/CDC guidelines define normal as systolic <120 AND diastolic <80." }
+    ];
+
+    // App State
+    let questionsOrder = [...rawQuestions];
+    let userAnswers = {}; 
+    let currentIndex = 0; 
+    let isDarkMode = false;
+
+    // Elements
+    const quizArea = document.getElementById('quiz-area');
+    const questionGrid = document.getElementById('question-grid');
+    const statCompleted = document.getElementById('stat-completed');
+    const statAccuracy = document.getElementById('stat-accuracy');
+    const statCorrect = document.getElementById('stat-correct');
+    const fillCorrect = document.getElementById('fill-correct');
+    const fillWrong = document.getElementById('fill-wrong');
+    const percentLabel = document.getElementById('percent-label');
+
+    function shuffle(array) {
+        let m = array.length, t, i;
+        while (m) {
+            i = Math.floor(Math.random() * m--);
+            t = array[m];
+            array[m] = array[i];
+            array[i] = t;
+        }
+        return array;
+    }
+
+    function initGrid() {
+        questionGrid.innerHTML = '';
+        questionsOrder.forEach((q, i) => {
+            const item = document.createElement('div');
+            item.className = 'grid-item';
+            item.innerText = i + 1;
+            item.id = `grid-item-${i}`;
+            item.onclick = () => jumpToQuestion(i);
+            questionGrid.appendChild(item);
+        });
+        updateGridStatus();
+    }
+
+    function jumpToQuestion(index) {
+        currentIndex = index;
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = questionsOrder[currentIndex];
+        const previousAnswer = userAnswers[q.id];
+        
+        quizArea.innerHTML = `
+            <div class="question-card">
+                <div class="category">${q.category}</div>
+                <div class="question-text">${q.q}</div>
+                <div class="options-grid">
+                    ${q.options.map((opt, i) => {
+                        let cls = 'option';
+                        if (previousAnswer) {
+                            cls += ' disabled';
+                            if (i === q.answer) cls += ' correct';
+                            else if (i === previousAnswer.chosen && !previousAnswer.correct) cls += ' wrong';
+                        }
+                        return `<button class="${cls}" onclick="handleChoice(${i})">${String.fromCharCode(65+i)}. ${opt}</button>`;
+                    }).join('')}
+                </div>
+                <div class="explanation ${previousAnswer ? 'visible' : ''}" id="explanation">
+                    <p><strong>Correct Answer: ${String.fromCharCode(65 + q.answer)}</strong></p>
+                    <p>${q.logic}</p>
+                </div>
+            </div>
+        `;
+        
+        updateGridStatus();
+        updateStats();
+        
+        document.getElementById('prev-btn').disabled = currentIndex === 0;
+        document.getElementById('next-btn').innerText = currentIndex === questionsOrder.length - 1 ? "Start Over" : "Next Question →";
+    }
+
+    function handleChoice(index) {
+        const q = questionsOrder[currentIndex];
+        if (userAnswers[q.id]) return;
+        
+        const isCorrect = index === q.answer;
+        userAnswers[q.id] = { chosen: index, correct: isCorrect };
+        
+        renderQuestion();
+    }
+
+    function updateGridStatus() {
+        document.querySelectorAll('.grid-item').forEach((item, i) => {
+            const q = questionsOrder[i];
+            item.classList.remove('active', 'correct', 'wrong');
+            if (i === currentIndex) item.classList.add('active');
+            if (userAnswers[q.id]) {
+                item.classList.add(userAnswers[q.id].correct ? 'correct' : 'wrong');
+            }
+        });
+    }
+
+    function updateStats() {
+        const answeredIds = Object.keys(userAnswers);
+        const correctCount = answeredIds.filter(id => userAnswers[id].correct).length;
+        const totalTried = answeredIds.length;
+        const wrongCount = totalTried - correctCount;
+        const totalTotal = questionsOrder.length;
+
+        statCompleted.innerText = `${totalTried} / ${totalTotal}`;
+        statCorrect.innerText = correctCount;
+        
+        const accuracy = totalTried > 0 ? Math.round((correctCount / totalTried) * 100) : 0;
+        statAccuracy.innerText = `${accuracy}%`;
+        
+        const totalPercent = Math.round((totalTried / totalTotal) * 100);
+        percentLabel.innerText = `${totalPercent}% Done`;
+        
+        fillCorrect.style.width = `${(correctCount / totalTotal) * 100}%`;
+        fillWrong.style.width = `${(wrongCount / totalTotal) * 100}%`;
+    }
+
+    document.getElementById('next-btn').onclick = () => {
+        if (currentIndex < questionsOrder.length - 1) {
+            currentIndex++;
+            renderQuestion();
+            window.scrollTo(0,0);
+        } else {
+            if (confirm("Finish and restart?")) {
+                currentIndex = 0;
+                renderQuestion();
             }
         }
+    };
 
-        let solvedCorrect = new Set();
-        let solvedWrong = new Set();
-        let currentFilter = 0;
-        let activeCase = null;
-        let randomizedPool = [...fullPool];
-
-        function renderGrid(data = randomizedPool) {
-            const grid = document.getElementById('case-grid');
-            grid.innerHTML = '';
-            
-            data.forEach(c => {
-                const card = document.createElement('div');
-                let statusClass = '';
-                if(solvedCorrect.has(c.id)) statusClass = 'solved-correct opacity-50';
-                else if(solvedWrong.has(c.id)) statusClass = 'solved-wrong';
-
-                card.className = `case-card p-6 rounded-[2rem] cursor-pointer ${statusClass}`;
-                card.innerHTML = `
-                    <div class="flex justify-between items-start mb-4">
-                        <span class="category-tag cat-${c.cat}">${categoriesData[c.cat-1].name.split(' ')[0]}</span>
-                        <span class="text-[10px] font-mono text-slate-700 tracking-tighter">${c.id}</span>
-                    </div>
-                    <h3 class="font-bold text-slate-100 line-clamp-2 mb-2 leading-tight text-sm">${c.title}</h3>
-                    <p class="text-slate-500 text-[10px] leading-relaxed line-clamp-2">${c.text}</p>
-                `;
-                card.onclick = () => openCase(c);
-                grid.appendChild(card);
-            });
-            updateStats();
+    document.getElementById('prev-btn').onclick = () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderQuestion();
+            window.scrollTo(0,0);
         }
+    };
 
-        function openCase(c) {
-            activeCase = c;
-            const modal = document.getElementById('case-modal');
-            const catTag = document.getElementById('modal-category');
-            
-            catTag.innerText = categoriesData[c.cat-1].name;
-            catTag.className = `category-tag cat-${c.cat}`;
-            document.getElementById('modal-id').innerText = `Ref: ${c.id}`;
-            document.getElementById('modal-title').innerText = c.text;
-            document.getElementById('feedback-section').classList.add('hidden');
-            
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = '';
-            
-            c.options.forEach((opt, idx) => {
-                const div = document.createElement('button');
-                div.className = 'option-item p-5 rounded-3xl flex items-center gap-4 text-sm font-medium border-2';
-                div.innerHTML = `<span class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full bg-slate-950 border border-slate-800 text-xs font-bold text-blue-400">${String.fromCharCode(65 + idx)}</span> ${opt}`;
-                div.onclick = () => selectOption(div, idx);
-                optionsContainer.appendChild(div);
-            });
+    document.getElementById('shuffle-btn').onclick = () => {
+        shuffle(questionsOrder);
+        currentIndex = 0;
+        initGrid();
+        renderQuestion();
+        const msg = document.createElement('div');
+        msg.style = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--accent); color:white; padding:10px 20px; border-radius:30px; font-weight:bold; z-index:1000;";
+        msg.innerText = "Order Shuffled!";
+        document.body.appendChild(msg);
+        setTimeout(() => msg.remove(), 2000);
+    };
 
-            modal.classList.add('active');
+    document.getElementById('reset-btn').onclick = () => {
+        if (confirm("Reset all progress?")) {
+            userAnswers = {};
+            currentIndex = 0;
+            renderQuestion();
+            initGrid();
         }
+    };
 
-        function selectOption(el, idx) {
-            if(document.getElementById('feedback-section').classList.contains('hidden')) {
-                const items = document.querySelectorAll('.option-item');
-                items.forEach((item, i) => {
-                    item.classList.add('disabled');
-                    if (i === activeCase.answer) {
-                        item.classList.add('correct');
-                        item.innerHTML += `<svg class="w-5 h-5 ml-auto text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>`;
-                    } else if (i === idx) {
-                        item.classList.add('wrong');
-                        item.innerHTML += `<svg class="w-5 h-5 ml-auto text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>`;
-                    } else {
-                        item.classList.add('opacity-30');
-                    }
-                });
+    document.getElementById('theme-btn').onclick = () => {
+        isDarkMode = !isDarkMode;
+        document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+    };
 
-                if(idx === activeCase.answer) solvedCorrect.add(activeCase.id);
-                else solvedWrong.add(activeCase.id);
-                
-                document.getElementById('explanation-text').innerText = activeCase.explanation;
-                document.getElementById('feedback-section').classList.remove('hidden');
-                updateStats();
-            }
-        }
+    document.getElementById('toggle-grid-btn').onclick = function() {
+        const isHidden = questionGrid.style.display === 'none';
+        questionGrid.style.display = isHidden ? 'grid' : 'none';
+        this.innerText = isHidden ? 'Hide Grid' : 'Show Grid';
+    };
 
-        function closeModal() {
-            document.getElementById('case-modal').classList.remove('active');
-            filterCases(currentFilter);
-        }
-
-        function shuffleBoard() {
-            randomizedPool.sort(() => Math.random() - 0.5);
-            filterCases(currentFilter);
-        }
-
-        function filterCases(cat) {
-            currentFilter = cat;
-            document.querySelectorAll('.filter-btn').forEach((btn, i) => {
-                btn.className = (i === cat) ? 
-                    "filter-btn whitespace-nowrap bg-blue-600 text-white px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest" : 
-                    "filter-btn whitespace-nowrap bg-slate-800 text-slate-400 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:text-white";
-            });
-            const query = document.getElementById('search-input').value.toLowerCase();
-            const filtered = randomizedPool.filter(c => 
-                (cat === 0 || c.cat === cat) && 
-                (c.text.toLowerCase().includes(query) || (c.title && c.title.toLowerCase().includes(query)))
-            );
-            renderGrid(filtered);
-        }
-
-        function updateStats() {
-            const correct = solvedCorrect.size;
-            const wrong = solvedWrong.size;
-            const totalSeen = correct + wrong;
-            const accuracy = totalSeen === 0 ? 0 : Math.round((correct / totalSeen) * 100);
-
-            document.getElementById('stat-correct').innerText = correct;
-            document.getElementById('stat-accuracy').innerText = `${accuracy}%`;
-            document.getElementById('progress-text').innerText = `${totalSeen}/150`;
-            document.getElementById('progress-fill').style.width = `${(totalSeen / 150) * 100}%`;
-
-            const masteryContainer = document.getElementById('category-mastery');
-            masteryContainer.innerHTML = '';
-            categoriesData.forEach((cat) => {
-                const catTotal = randomizedPool.filter(c => c.cat === cat.id).length;
-                const catCorrect = randomizedPool.filter(c => c.cat === cat.id && solvedCorrect.has(c.id)).length;
-                const perc = Math.round((catCorrect / catTotal) * 100) || 0;
-                
-                const pill = document.createElement('div');
-                pill.className = `flex-shrink-0 mastery-pill bg-slate-900 border-slate-800`;
-                pill.innerHTML = `<span class="w-2 h-2 rounded-full cat-${cat.id}"></span> ${cat.name.split(' ')[0]}: <b class="text-white ml-1">${perc}%</b>`;
-                masteryContainer.appendChild(pill);
-            });
-        }
-
-        function resetStats() {
-            if(confirm("Flush history and reshuffle board?")) {
-                solvedCorrect.clear();
-                solvedWrong.clear();
-                shuffleBoard();
-            }
-        }
-
-        document.getElementById('search-input').oninput = () => filterCases(currentFilter);
-
-        window.onload = () => {
-            shuffleBoard();
-        };
-    </script>
+    initGrid();
+    renderQuestion();
+</script>
 </body>
 </html>
